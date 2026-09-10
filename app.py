@@ -1,13 +1,16 @@
 import os
 import requests
 from dotenv import load_dotenv
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 
 # Load environment variables from .env file
 load_dotenv()  
 
 app = Flask(__name__)
 API_KEY = os.getenv('OPENWEATHER_API_KEY')
+
+# Set the secret key for session management
+app.secret_key = os.getenv('SECRET_KEY')  
 
 @app.route('/')
 def home():
@@ -32,8 +35,21 @@ def weather():
     feels_like = data['main']['feels_like']
     condition = data['weather'][0]['description']
     humidity = data['main']['humidity']
+    icon = data['weather'][0]['icon']
 
-    return render_template('weather.html', city=city, temp=temp, feels_like=feels_like, condition=condition, humidity=humidity)
+    if 'recent_searches' not in session:
+        session['recent_searches'] = []
+
+    if city not in session['recent_searches']:
+        session['recent_searches'].insert(0, city)
+        
+        # Keep only the last 5 searches
+        session['recent_searches'] = session['recent_searches'][:5]  
+        
+        # Mark the session as modified to ensure it gets saved
+        session.modified = True  
+
+    return render_template('weather.html', city=city, temp=temp, feels_like=feels_like, condition=condition, humidity=humidity, icon=icon, recent_searches=session['recent_searches'])
 
 
 if __name__ == '__main__':

@@ -1,15 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Weather Result</title>
-</head>
-<body>
-    <h1>Weather in {{ city }}</h1>
-    <p>Temperature: {{ temp }}°C</p>
-    <p>Feels like: {{ feels_like }}°C</p>
-    <p>Condition: {{ condition }}</p>
-    <p>Humidity: {{ humidity }}%</p>
+{% extends "base.html" %}
 
-    <a href="/">Search another city</a>
-</body>
-</html>
+{% block content %}
+<h1>Weather in {{ city }}</h1>
+
+<div class="card p-4" style="max-width: 400px;">
+    <img src="https://openweathermap.org/img/wn/{{ icon }}@2x.png" alt="{{ condition }}">
+    <p class="fs-4">{{ temp }}°C</p>
+    <p>Feels like: {{ feels_like }}°C</p>
+    <p class="text-capitalize">{{ condition }}</p>
+    <p>Humidity: {{ humidity }}%</p>
+</div>
+
+<a href="/" class="btn btn-link mt-3">Search another city</a>
+
+{% if recent_searches %}
+<div class="mt-4">
+    <h6>Recent searches:</h6>
+    <ul class="list-unstyled">
+        {% for search in recent_searches %}
+        <li><a href="/weather?city={{ search }}">{{ search }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% endblock %}

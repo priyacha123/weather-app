@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Weather App</title>
-</head>
-<body>
-    <h1>Weather App</h1>
-    <form action="/weather" method="GET">
-        <input type="text" name="city" placeholder="Enter city name" required>
-        <button type="submit">Get Weather</button>
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">🌤️ Weather App</h1>
+<form action="/weather" method="GET" class="d-flex gap-2">
+    <input type="text" name="city" class="form-control" placeholder="Enter city name" required>
+    <button type="submit" class="btn btn-primary">Get Weather</button>
+</form>
+{% endblock %}

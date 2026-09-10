@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Error</title>
-</head>
-<body>
-    <h1>Oops!</h1>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="alert alert-danger">
+    <h4>Oops!</h4>
     <p>{{ message }}</p>
-    <a href="/">Try again</a>
-</body>
-</html>
+</div>
+<a href="/" class="btn btn-link">Try again</a>
+{% endblock %}
