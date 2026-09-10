@@ -6,4 +6,21 @@
     <input type="text" name="city" class="form-control" placeholder="Enter city name" required>
     <button type="submit" class="btn btn-primary">Get Weather</button>
 </form>
+<button onclick="useLocation()" class="btn btn-outline-secondary mt-3">📍 Use my location</button>
+
+<script>
+function useLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            window.location.href = `/weather/coords?lat=${lat}&lon=${lon}`;
+        }, function() {
+            alert("Could not get your location. Please allow location access.");
+        });
+    } else {
+        alert("Geolocation is not supported by your browser.");
+    }
+}
+</script>
 {% endblock %}

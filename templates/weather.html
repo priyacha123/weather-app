@@ -1,27 +1,50 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <h1>Weather in {{ city }}</h1>
 
-<div class="card p-4" style="max-width: 400px;">
-    <img src="https://openweathermap.org/img/wn/{{ icon }}@2x.png" alt="{{ condition }}">
-    <p class="fs-4">{{ temp }}°C</p>
-    <p>Feels like: {{ feels_like }}°C</p>
-    <p class="text-capitalize">{{ condition }}</p>
-    <p>Humidity: {{ humidity }}%</p>
+<p>
+  {% if unit == 'metric' %}
+  <a href="/weather?city={{city}}&unit={{imperial}}">Switch to Fahrenheit</a>
+  {% else %}
+  <a href="/weather?city={{city}}&unit={{metric}}">Switch to Celsius</a>
+  {% endif %}
+</p>
+
+<div class="card p-4" style="max-width: 400px">
+  <img
+    src="https://openweathermap.org/img/wn/{{ icon }}@2x.png"
+    alt="{{ condition }}"
+  />
+  <p class="fs-4">{{ temp }}°{{ 'C' if unit == 'metric' else 'F' }}</p>
+  <p>Feels like: {{ feels_like }}°{{ 'C' if unit == 'metric' else 'F' }}</p>
+  <p class="text-capitalize">{{ condition }}</p>
+  <p>Humidity: {{ humidity }}%</p>
 </div>
 
 <a href="/" class="btn btn-link mt-3">Search another city</a>
 
-{% if recent_searches %}
+{% if daily_forecast %}
 <div class="mt-4">
-    <h6>Recent searches:</h6>
-    <ul class="list-unstyled">
-        {% for search in recent_searches %}
-        <li><a href="/weather?city={{ search }}">{{ search }}</a></li>
-        {% endfor %}
-    </ul>
+  <h6>5-Day Forecast:</h6>
+  <div class="d-flex gap-2 flex-wrap">
+    {% for day in daily_forecast %}
+    <div class="card p-2 text-center" style="width: 100px">
+      <small>{{ day.date }}</small>
+      <img
+        src="https://openweathermap.org/img/wn/{{ day.icon }}.png"
+        alt="{{ day.condition }}"
+      />
+      <strong>{{ day.temp }}°{{ 'C' if unit == 'metric' else 'F' }}</strong>
+    </div>
+    {% endfor %}
+  </div>
 </div>
-{% endif %}
-
-{% endblock %}
+{% endif %} {% if recent_searches %}
+<div class="mt-4">
+  <h6>Recent searches:</h6>
+  <ul class="list-unstyled">
+    {% for search in recent_searches %}
+    <li><a href="/weather?city={{ search }}">{{ search }}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %} {% endblock %}
