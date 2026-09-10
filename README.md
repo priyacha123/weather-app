@@ -2,7 +2,7 @@
 
 A simple weather lookup app built with Flask, using the OpenWeatherMap API to show current conditions and a 5-day forecast for any city — or your current location.
 
-**Live demo:** _add your Render URL here_
+**Live demo:** https://weather-app-fz07.onrender.com
 
 ## Features
 
@@ -42,15 +42,14 @@ flask-weather-app/
 
 1. Clone the repo and move into it:
    ```
-   git clone https://github.com/your-username/flask-weather-app.git
-   cd flask-weather-app
+   git clone https://github.com/priyacha123/weather-app.git
+   cd weather-app
    ```
 
 2. Create and activate a virtual environment:
    ```
-   python -m venv venv
-   venv\Scripts\activate      # Windows
-   source venv/bin/activate   # Mac/Linux
+   python -m venv .venv
+   .venv\Scripts\activate      # Windows
    ```
 
 3. Install dependencies:
