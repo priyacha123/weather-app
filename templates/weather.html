@@ -1,50 +1,65 @@
-{% extends "base.html" %} {% block content %}
-<h1>Weather in {{ city }}</h1>
+{% extends "base.html" %}
 
-<p>
-  {% if unit == 'metric' %}
-  <a href="/weather?city={{city}}&unit=imperial">Switch to Fahrenheit</a>
-  {% else %}
-  <a href="/weather?city={{city}}&unit=metric">Switch to Celsius</a>
-  {% endif %}
-</p>
+{% block title %}{{ city }} weather{% endblock %}
 
-<div class="card p-4" style="max-width: 400px">
-  <img
-    src="https://openweathermap.org/img/wn/{{ icon }}@2x.png"
-    alt="{{ condition }}"
-  />
-  <p class="fs-4">{{ temp }}°{{ 'C' if unit == 'metric' else 'F' }}</p>
-  <p>Feels like: {{ feels_like }}°{{ 'C' if unit == 'metric' else 'F' }}</p>
-  <p class="text-capitalize">{{ condition }}</p>
-  <p>Humidity: {{ humidity }}%</p>
+{% block content %}
+<div class="weather-heading">
+    <div>
+        <a href="{{ url_for('home') }}" class="back-link">← Search another place</a>
+        <div class="location-label"><span>⌖</span> Current weather</div>
+        <h1>{{ city }}</h1>
+        <p class="last-updated">Right now · Local conditions</p>
+    </div>
+    <div class="unit-switch" role="group" aria-label="Temperature unit">
+        <a href="{{ url_for('weather', city=city, unit='metric') }}" class="{{ 'active' if unit == 'metric' else '' }}">°C</a>
+        <a href="{{ url_for('weather', city=city, unit='imperial') }}" class="{{ 'active' if unit == 'imperial' else '' }}">°F</a>
+    </div>
 </div>
 
-<a href="/" class="btn btn-link mt-3">Search another city</a>
+<section class="current-weather-card">
+    <div class="current-weather-main">
+        <img class="weather-icon-large" src="https://openweathermap.org/img/wn/{{ icon }}@4x.png" alt="{{ condition }}">
+        <div>
+            <div class="temperature">{{ temp|round|int }}°<span>{{ 'C' if unit == 'metric' else 'F' }}</span></div>
+            <div class="condition">{{ condition }}</div>
+            <div class="feels-like">Feels like {{ feels_like|round|int }}°</div>
+        </div>
+    </div>
+    <div class="weather-stats">
+        <div class="weather-stat"><span class="stat-symbol">◌</span><div><small>Humidity</small><strong>{{ humidity }}%</strong></div></div>
+        <div class="weather-stat"><span class="stat-symbol">◒</span><div><small>Comfort</small><strong>{{ 'Pleasant' if humidity < 70 else 'Humid' }}</strong></div></div>
+    </div>
+</section>
 
 {% if daily_forecast %}
-<div class="mt-4">
-  <h6>5-Day Forecast:</h6>
-  <div class="d-flex gap-2 flex-wrap">
-    {% for day in daily_forecast %}
-    <div class="card p-2 text-center" style="width: 100px">
-      <small>{{ day.date }}</small>
-      <img
-        src="https://openweathermap.org/img/wn/{{ day.icon }}.png"
-        alt="{{ day.condition }}"
-      />
-      <strong>{{ day.temp }}°{{ 'C' if unit == 'metric' else 'F' }}</strong>
+<section class="forecast-section">
+    <div class="section-header">
+        <div><span class="section-kicker">Looking ahead</span><h2>5-day forecast</h2></div>
+        <span class="forecast-note">Daily at noon</span>
     </div>
-    {% endfor %}
-  </div>
-</div>
-{% endif %} {% if recent_searches %}
-<div class="mt-4">
-  <h6>Recent searches:</h6>
-  <ul class="list-unstyled">
-    {% for search in recent_searches %}
-    <li><a href="/weather?city={{ search }}">{{ search }}</a></li>
-    {% endfor %}
-  </ul>
-</div>
-{% endif %} {% endblock %}
+    <div class="forecast-grid">
+        {% for day in daily_forecast %}
+        <article class="forecast-day {{ 'forecast-today' if loop.first else '' }}">
+            <span class="forecast-date">{{ day.date }}</span>
+            <img src="https://openweathermap.org/img/wn/{{ day.icon }}@2x.png" alt="{{ day.condition }}">
+            <strong>{{ day.temp|round|int }}°</strong>
+            <span class="forecast-condition">{{ day.condition }}</span>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if recent_searches %}
+<section class="recent-section">
+    <div class="section-header">
+        <div><span class="section-kicker">Your places</span><h2>Recent searches</h2></div>
+    </div>
+    <div class="recent-list">
+        {% for search in recent_searches %}
+        <a href="{{ url_for('weather', city=search, unit=unit) }}" class="recent-place"><span>⌖</span>{{ search }}<b>→</b></a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

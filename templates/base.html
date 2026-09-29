@@ -1,24 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Weather App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#102a43">
+    <title>{% block title %}SkyCast{% endblock %} · SkyCast</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <nav class="navbar navbar-light bg-light px-4">
-        <span class="navbar-brand">🌤️ Weather App</span>
-        <div>
-            {% if current_user.is_authenticated %}
-                <span class="me-3">Hi, {{ current_user.username }}</span>
-                <a href="/logout" class="btn btn-outline-danger btn-sm">Logout</a>
-            {% else %}
-                <a href="/login" class="btn btn-outline-primary btn-sm me-2">Login</a>
-                <a href="/register" class="btn btn-primary btn-sm">Register</a>
-            {% endif %}
+    <div class="page-glow page-glow-one"></div>
+    <div class="page-glow page-glow-two"></div>
+    <nav class="navbar navbar-expand-lg app-navbar">
+        <div class="container">
+            <a class="navbar-brand brand-mark" href="{{ url_for('home') if current_user.is_authenticated else url_for('login') }}">
+                <span class="brand-icon">✦</span>
+                <span>SkyCast</span>
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                {% if current_user.is_authenticated %}
+                    <span class="welcome-copy d-none d-sm-inline">Welcome back, {{ current_user.username }}</span>
+                    <a href="{{ url_for('logout') }}" class="btn btn-nav">Log out</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-nav d-none d-sm-inline">Log in</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-nav-primary">Get started</a>
+                {% endif %}
+            </div>
         </div>
     </nav>
-    <div class="container mt-5">
+
+    <main class="container app-main">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert app-alert" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         {% block content %}{% endblock %}
-    </div>
+    </main>
+
+    <footer class="container app-footer">
+        <span>SkyCast</span>
+        <span>Weather, made simple.</span>
+    </footer>
 </body>
 </html>

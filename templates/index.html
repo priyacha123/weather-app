@@ -1,26 +1,67 @@
 {% extends "base.html" %}
 
+{% block title %}Your forecast{% endblock %}
+
 {% block content %}
-<h1 class="mb-4">🌤️ Weather App</h1>
-<form action="/weather" method="GET" class="d-flex gap-2">
-    <input type="text" name="city" class="form-control" placeholder="Enter city name" required>
-    <button type="submit" class="btn btn-primary">Get Weather</button>
-</form>
-<button onclick="useLocation()" class="btn btn-outline-secondary mt-3">📍 Use my location</button>
+<section class="hero-panel">
+    <div class="hero-copy">
+        <span class="eyebrow"><span class="eyebrow-dot"></span> Your personal forecast</span>
+        <h1>Know your sky<br><span>before you step out.</span></h1>
+        <p>Get a clear, calm view of today's weather and the days ahead.</p>
+    </div>
+    <div class="hero-sun" aria-hidden="true">
+        <div class="sun-orbit sun-orbit-one"></div>
+        <div class="sun-orbit sun-orbit-two"></div>
+        <div class="sun-core">☼</div>
+    </div>
+</section>
+
+<section class="search-card">
+    <div class="section-kicker">Find a place</div>
+    <form action="{{ url_for('weather') }}" method="GET" class="search-form">
+        <label for="city" class="visually-hidden">City name</label>
+        <div class="search-input-wrap">
+            <span class="search-icon">⌕</span>
+            <input id="city" type="text" name="city" class="form-control" placeholder="Search city, e.g. Mumbai or London" required autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn-primary btn-search">Show weather <span>→</span></button>
+    </form>
+    <button id="location-button" onclick="useLocation()" class="location-button" type="button">
+        <span>⌖</span> Use my current location
+    </button>
+</section>
+
+<section class="feature-grid">
+    <div class="mini-feature">
+        <span class="feature-icon feature-icon-blue">◒</span>
+        <div><strong>Live conditions</strong><small>Current temperature & details</small></div>
+    </div>
+    <div class="mini-feature">
+        <span class="feature-icon feature-icon-gold">☀</span>
+        <div><strong>5-day outlook</strong><small>Plan your week with confidence</small></div>
+    </div>
+    <div class="mini-feature">
+        <span class="feature-icon feature-icon-green">⌁</span>
+        <div><strong>Anywhere you go</strong><small>Search cities around the world</small></div>
+    </div>
+</section>
 
 <script>
 function useLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            window.location.href = `/weather/coords?lat=${lat}&lon=${lon}`;
-        }, function() {
-            alert("Could not get your location. Please allow location access.");
-        });
-    } else {
-        alert("Geolocation is not supported by your browser.");
+    const button = document.getElementById('location-button');
+    if (!navigator.geolocation) {
+        button.innerHTML = '<span>!</span> Location is not supported';
+        return;
     }
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Finding your location...';
+    navigator.geolocation.getCurrentPosition(function(position) {
+        const { latitude, longitude } = position.coords;
+        window.location.href = `/weather/coords?lat=${latitude}&lon=${longitude}`;
+    }, function() {
+        button.disabled = false;
+        button.innerHTML = '<span>⌖</span> Allow location access to continue';
+    });
 }
 </script>
 {% endblock %}
